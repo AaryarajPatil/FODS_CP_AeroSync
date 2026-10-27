@@ -259,3 +259,36 @@ void userMenu() {
         }
     }
 }
+
+int main() {
+    loadFromFile();
+    int role;
+    printf("\n============================\n");
+    printf("Welcome to Flight Attendance System\n");
+    printf("============================\n");
+    printf("1. Admin Login\n");
+    printf("2. User Login\n");
+    printf("----------------------------\n");
+    printf("Enter your choice: ");
+    scanf("%d", &role);
+
+    if (role == 1) {
+        char password[20];
+        printf("Enter Admin Password: ");
+        scanf("%s", password);
+        if (strcmp(password, "admin123") == 0) {
+            printf("\nLogin Successful!\n");
+            adminMenu();
+        } else {
+            printf("\nIncorrect Password. Access Denied.\n");
+        }
+    } else if (role == 2) {
+        printf("\nWelcome User!\n");
+        userMenu();
+    } else {
+        printf("\nInvalid Option.\n");
+    }
+
+    saveToFile();
+    return 0;
+}
