@@ -241,3 +241,38 @@ void viewPassengers() {
                f.passengers[i].seat);
     }
 }
+
+void searchFlight() {
+    if (flightCount == 0) {
+        printf("\nNo flights available.\n");
+        return;
+    }
+
+    char query[50];
+    clearBuffer();
+
+    printf("\nEnter Flight Number or Destination: ");
+    if (fgets(query, sizeof(query), stdin) == NULL) {
+        printf("Error reading search query.\n");
+        return;
+    }
+    query[strcspn(query, "\n")] = 0;
+
+    int found = 0;
+    for (int i = 0; i < flightCount; i++) {
+        if (strstr(flights[i].flightNumber, query) != NULL ||
+            strstr(flights[i].destination, query) != NULL) {
+            printf("%s -> %s | Time: %s | Seats: %d/%d\n",
+                   flights[i].flightNumber,
+                   flights[i].destination,
+                   flights[i].departureTime,
+                   flights[i].bookedSeats,
+                   flights[i].totalSeats);
+            found = 1;
+        }
+    }
+
+    if (!found) {
+        printf("\nNo matching flights found\n");
+    }
+}
