@@ -231,3 +231,31 @@ void adminMenu() {
         }
     }
 }
+
+void userMenu() {
+    int choice;
+    while (1) {
+        printf("\n============================\n");
+        printf("  User Panel\n");
+        printf("============================\n");
+        printf("1. View Available Flights\n");
+        printf("2. Search Flight\n");
+        printf("3. Book Flight\n");
+        printf("4. Cancel My Booking\n");
+        printf("5. View Amount for Flight\n");
+        printf("6. Payment\n");
+        printf("7. Exit\n");
+        printf("----------------------------\n");
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+
+        switch (choice) {
+            case 1: viewFlights(); break;
+            case 3: bookFlight(); break;
+            case 5: showAmount(); break;
+            case 6: payment(); break;
+            case 7: printf("\nLogging out...\n"); return;
+            default: printf("\nInvalid choice.\n");
+        }
+    }
+}
