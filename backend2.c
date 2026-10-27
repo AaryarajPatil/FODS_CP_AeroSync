@@ -198,3 +198,36 @@ void showAmount() {
 void payment() {
     printf("\nPayment Successful\nThank you for choosing our Airline!\n");
 }
+
+void adminMenu() {
+    int choice;
+    while (1) {
+        printf("\n============================\n");
+        printf("  Admin Panel\n");
+        printf("============================\n");
+        printf("1. Add Flight\n");
+        printf("2. View Flights\n");
+        printf("3. Mark Attendance\n");
+        printf("4. View Passengers\n");
+        printf("5. Search Flight\n");
+        printf("6. Delete Passenger\n");
+        printf("7. Delete Flight\n");
+        printf("8. Sort Flights by Time\n");
+        printf("9. Show Statistics\n");
+        printf("10. Show Amount\n");
+        printf("11. Payment\n");
+        printf("12. Exit\n");
+        printf("----------------------------\n");
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+
+        switch (choice) {
+            case 1: addFlight(); break;
+            case 2: viewFlights(); break;
+            case 10: showAmount(); break;
+            case 11: payment(); break;
+            case 12: printf("\nLogging out...\n"); return;
+            default: printf("\nInvalid choice.\n");
+        }
+    }
+}
