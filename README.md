@@ -100,5 +100,7 @@ gcc -O2 backend.c -o backend.exe
 ---
 
 ## 👤 Author
-Developed by **Aaryaraj Patil**  
+Developed by **Aaryaraj Patil**  & ** Tirtha Patil**
 GitHub: [@AaryarajPatil](https://github.com/AaryarajPatil)
+GitHub: github.com/tirtha-patil
+
