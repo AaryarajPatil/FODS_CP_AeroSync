@@ -198,3 +198,46 @@ void markAttendance() {
 
     printf("\nAttendance Marked Successfully\n");
 }
+
+void viewPassengers() {
+    if (flightCount == 0) {
+        printf("\nNo flights available.\n");
+        return;
+    }
+
+    char flightNum[10];
+    printf("\nEnter Flight Number: ");
+    if (scanf("%9s", flightNum) != 1) {
+        printf("Error reading flight number.\n");
+        clearBuffer();
+        return;
+    }
+
+    int found = -1;
+    for (int i = 0; i < flightCount; i++) {
+        if (strcmp(flights[i].flightNumber, flightNum) == 0) {
+            found = i;
+            break;
+        }
+    }
+
+    if (found == -1) {
+        printf("\nFlight not found\n");
+        return;
+    }
+
+    struct Flight f = flights[found];
+    if (f.bookedSeats == 0) {
+        printf("\nNo passengers\n");
+        return;
+    }
+
+    printf("\nPassengers for Flight %s:\n", f.flightNumber);
+    for (int i = 0; i < f.bookedSeats; i++) {
+        printf("%d. %s (Age: %d, Seat: %s)\n",
+               i + 1,
+               f.passengers[i].name,
+               f.passengers[i].age,
+               f.passengers[i].seat);
+    }
+}
