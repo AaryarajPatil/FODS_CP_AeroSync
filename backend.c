@@ -391,3 +391,19 @@ void sortFlightsByTime() {
     }
     printf("\nFlights sorted by time\n");
 }
+
+void showStatistics() {
+    if (flightCount == 0) {
+        printf("\nNo flights available\n");
+        return;
+    }
+
+    printf("\nFlight Statistics:\n");
+    for (int i = 0; i < flightCount; i++) {
+        float percent = (flights[i].bookedSeats * 100.0f) / flights[i].totalSeats;
+        printf("%s -> %s | %.2f%% Seats Filled\n",
+               flights[i].flightNumber,
+               flights[i].destination,
+               percent);
+    }
+}
