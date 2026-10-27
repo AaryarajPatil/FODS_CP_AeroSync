@@ -26,8 +26,8 @@ Key highlights:
 | Phase | Milestone | Focus Area | Status |
 | :--- | :--- | :--- | :--- |
 | **Day 1** | **Core Architecture & C Engine** | Project scaffold, core data structures, binary persistence layer, flight scheduling CRUD, passenger attendance marking, sorting, and analytics. | ✅ **Completed** |
-| **Day 2** | **Role-Based Portals & Commercial Engine** | Admin vs User authentication gating, commercial seat reservation, dynamic fare calculation, and simulated digital payments. | 🔄 **Next Up** |
-| **Day 3** | **Interactive Web Dashboard & Integrations** | Modern glassmorphism UI, simulated boarding pass QR camera scanner, visual occupancy analytics, and full integration. | ⏳ **Upcoming** |
+| **Day 2** | **Role-Based Portals & Commercial Engine** | Admin vs User authentication gating, commercial seat reservation, dynamic fare calculation, and simulated digital payments. | ✅ **Completed** |
+| **Day 3** | **Interactive Web Dashboard & Integrations** | Modern glassmorphism UI, simulated boarding pass QR camera scanner, visual occupancy analytics, and full integration. | 🔄 **Next Up** |
 
 ---
 
@@ -44,6 +44,7 @@ AeroSync operates using structured relational memory records:
 | - departureTime  : char[20]                               |
 | - totalSeats     : int                                    |
 | - bookedSeats    : int                                    |
+| - fare           : float                                  |
 | - passengers[]   : struct Passenger[MAX_PASSENGERS]       |
 +-----------------------------+-----------------------------+
                               | 1..*
@@ -58,17 +59,20 @@ AeroSync operates using structured relational memory records:
 
 ---
 
-## 🚀 Core Features (Day 1 Release)
+## 🚀 Core Features (Day 1 & Day 2 Releases)
 
-1. **Flight Scheduling**: Add scheduled flights with unique identifiers, destinations, departure timestamps, and seating capacities.
-2. **Flight Schedule Browser**: View all available and active flights in formatted tabular views.
-3. **Passenger Attendance Tracking**: Mark gate attendance and record passenger details (Name, Age, Seat designation) with instant seat decrementation.
-4. **Passenger Manifest Inspection**: Print full passenger manifests for any scheduled flight.
-5. **Search Engine**: Search flights dynamically using flight numbers or destination keywords.
-6. **Cancellation & Compaction**: Delete flights or cancel passenger bookings with in-memory array compaction.
-7. **Temporal Sorting**: Chronologically sort flight schedules using departure time comparisons.
-8. **Real-time Occupancy Analytics**: Calculate and report capacity percentage utilization across all active flights.
-9. **Binary File Storage**: Automatically save and restore state from binary storage on startup and shutdown.
+1. **Flight Scheduling**: Add scheduled flights with unique identifiers, destinations, departure timestamps, seating capacities, and fare pricing.
+2. **Flight Schedule Browser**: View all available and active flights in formatted tabular views with fares.
+3. **Role-Based Portals (RBAC)**: Password-protected Admin Panel (`admin123`) and self-service User Portal.
+4. **Commercial Seat Booking**: End-to-end flight booking with real-time seat decrementation and fare estimation.
+5. **Billing & Fare Lookup**: Instant ticket pricing query and payment confirmation simulation.
+6. **Passenger Attendance Tracking**: Mark gate attendance and record passenger details with instant verification.
+7. **Passenger Manifest Inspection**: Print full passenger manifests for any scheduled flight.
+8. **Search Engine**: Search flights dynamically using flight numbers or destination keywords.
+9. **Cancellation & Compaction**: Delete flights or cancel passenger bookings with in-memory array compaction.
+10. **Temporal Sorting**: Chronologically sort flight schedules using departure time comparisons.
+11. **Real-time Occupancy Analytics**: Calculate and report capacity percentage utilization across all active flights.
+12. **Binary File Storage**: Automatically save and restore state from binary storage on startup and shutdown.
 
 ---
 
@@ -83,11 +87,14 @@ AeroSync operates using structured relational memory records:
 # Compile the Day 1 CLI backend
 gcc -O2 backend.c -o backend.exe
 
+# Compile the Day 2 Commercial & RBAC backend
+gcc -O2 backend2.c -o backend2.exe
+
 # Run the executable (Windows)
-.\backend.exe
+.\backend2.exe
 
 # Run on Linux / macOS
-./backend
+./backend2
 ```
 
 ---
@@ -99,8 +106,7 @@ gcc -O2 backend.c -o backend.exe
 
 ---
 
-## 👤 Author
-Developed by **Aaryaraj Patil**  & ** Tirtha Patil**
-GitHub: [@AaryarajPatil](https://github.com/AaryarajPatil)
-GitHub: github.com/tirtha-patil
-
+## 👤 Authors
+Developed by **Aaryaraj Patil** & **Tirtha Patil**  
+- Aaryaraj: [@AaryarajPatil](https://github.com/AaryarajPatil)  
+- Tirtha: [github.com/tirtha-patil](https://github.com/tirtha-patil)
