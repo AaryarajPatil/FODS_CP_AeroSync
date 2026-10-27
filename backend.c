@@ -276,3 +276,40 @@ void searchFlight() {
         printf("\nNo matching flights found\n");
     }
 }
+
+void deleteFlight() {
+    if (flightCount == 0) {
+        printf("\nNo flights available to delete.\n");
+        return;
+    }
+
+    char flightNum[10];
+    printf("\nEnter Flight Number to Delete: ");
+    if (scanf("%9s", flightNum) != 1) {
+        printf("Error reading flight number.\n");
+        clearBuffer();
+        return;
+    }
+
+    int found = -1;
+    for (int i = 0; i < flightCount; i++) {
+        if (strcmp(flights[i].flightNumber, flightNum) == 0) {
+            found = i;
+            break;
+        }
+    }
+
+    if (found == -1) {
+        printf("\nFlight not found\n");
+        return;
+    }
+
+    for (int i = found; i < flightCount - 1; i++) {
+        flights[i] = flights[i + 1];
+    }
+
+    flightCount--;
+    saveToFile();
+
+    printf("\nFlight deleted successfully\n");
+}
