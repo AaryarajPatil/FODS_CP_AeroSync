@@ -146,3 +146,32 @@ void bookFlight() {
     printf("\nFlight booked successfully!\n");
     printf("Amount to Pay: Rs.%.2f\n", f->fare);
 }
+
+void deleteFlight() {
+    if (flightCount == 0) {
+        printf("\nNo flights available.\n");
+        return;
+    }
+
+    char flightNum[10];
+    printf("\nEnter Flight Number to Delete: ");
+    scanf("%9s", flightNum);
+
+    int found = -1;
+    for (int i = 0; i < flightCount; i++) {
+        if (strcmp(flights[i].flightNumber, flightNum) == 0)
+            found = i;
+    }
+
+    if (found == -1) {
+        printf("\nFlight not found!\n");
+        return;
+    }
+
+    for (int i = found; i < flightCount - 1; i++) {
+        flights[i] = flights[i + 1];
+    }
+    flightCount--;
+    saveToFile();
+    printf("\nFlight deleted successfully!\n");
+}
