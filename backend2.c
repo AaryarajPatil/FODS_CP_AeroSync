@@ -175,3 +175,26 @@ void deleteFlight() {
     saveToFile();
     printf("\nFlight deleted successfully!\n");
 }
+
+void showAmount() {
+    if (flightCount == 0) {
+        printf("\nNo flights available.\n");
+        return;
+    }
+
+    char flightNum[10];
+    printf("\nEnter Flight Number: ");
+    scanf("%9s", flightNum);
+
+    for (int i = 0; i < flightCount; i++) {
+        if (strcmp(flights[i].flightNumber, flightNum) == 0) {
+            printf("\nFare for Flight %s -> Rs.%.2f per ticket\n", flights[i].flightNumber, flights[i].fare);
+            return;
+        }
+    }
+    printf("\nFlight not found.\n");
+}
+
+void payment() {
+    printf("\nPayment Successful\nThank you for choosing our Airline!\n");
+}
