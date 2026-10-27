@@ -23,3 +23,27 @@ struct Flight {
 
 struct Flight flights[MAX_FLIGHTS];
 int flightCount = 0;
+
+void clearBuffer() {
+    int c;
+    while ((c = getchar()) != '\n' && c != EOF);
+}
+
+void saveToFile() {
+    FILE *fp = fopen("flights.txt", "wb");
+    if (!fp) {
+        printf("Error: Unable to save file.\n");
+        return;
+    }
+    fwrite(&flightCount, sizeof(int), 1, fp);
+    fwrite(flights, sizeof(struct Flight), flightCount, fp);
+    fclose(fp);
+}
+
+void loadFromFile() {
+    FILE *fp = fopen("flights.txt", "rb");
+    if (!fp) return;
+    fread(&flightCount, sizeof(int), 1, fp);
+    fread(flights, sizeof(struct Flight), flightCount, fp);
+    fclose(fp);
+}
