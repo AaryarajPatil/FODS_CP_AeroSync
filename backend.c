@@ -313,3 +313,63 @@ void deleteFlight() {
 
     printf("\nFlight deleted successfully\n");
 }
+
+void cancelPassenger() {
+    if (flightCount == 0) {
+        printf("\nNo flights available.\n");
+        return;
+    }
+
+    char flightNum[10], name[50];
+
+    printf("\nEnter Flight Number: ");
+    if (scanf("%9s", flightNum) != 1) {
+        printf("Error reading flight number.\n");
+        clearBuffer();
+        return;
+    }
+    clearBuffer();
+
+    printf("Enter Passenger Name: ");
+    if (fgets(name, sizeof(name), stdin) == NULL) {
+        printf("Error reading passenger name.\n");
+        return;
+    }
+    name[strcspn(name, "\n")] = 0;
+
+    int found = -1;
+    for (int i = 0; i < flightCount; i++) {
+        if (strcmp(flights[i].flightNumber, flightNum) == 0) {
+            found = i;
+            break;
+        }
+    }
+
+    if (found == -1) {
+        printf("\nFlight not found\n");
+        return;
+    }
+
+    struct Flight *f = &flights[found];
+    int index = -1;
+    for (int j = 0; j < f->bookedSeats; j++) {
+        if (strcmp(f->passengers[j].name, name) == 0) {
+            index = j;
+            break;
+        }
+    }
+
+    if (index == -1) {
+        printf("\nPassenger not found\n");
+        return;
+    }
+
+    for (int j = index; j < f->bookedSeats - 1; j++) {
+        f->passengers[j] = f->passengers[j + 1];
+    }
+
+    f->bookedSeats--;
+    saveToFile();
+
+    printf("\nPassenger cancelled successfully\n");
+}
