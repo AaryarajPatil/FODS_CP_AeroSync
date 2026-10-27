@@ -407,3 +407,50 @@ void showStatistics() {
                percent);
     }
 }
+
+int main() {
+    loadFromFile();
+    int choice;
+
+    while (1) {
+        printf("\n============================\n");
+        printf("Flight Attendance System\n");
+        printf("============================\n");
+        printf("1. Add Flight\n");
+        printf("2. View Flights\n");
+        printf("3. Mark Attendance\n");
+        printf("4. View Passengers\n");
+        printf("5. Search Flight\n");
+        printf("6. Delete Flight\n");
+        printf("7. Cancel Passenger\n");
+        printf("8. Sort Flights by Time\n");
+        printf("9. Show Statistics\n");
+        printf("10. Exit\n");
+        printf("----------------------------\n");
+        printf("Enter your choice: ");
+        if (scanf("%d", &choice) != 1) {
+            printf("\nInvalid input.\n");
+            clearBuffer();
+            continue;
+        }
+
+        switch (choice) {
+            case 1: addFlight(); break;
+            case 2: viewFlights(); break;
+            case 3: markAttendance(); break;
+            case 4: viewPassengers(); break;
+            case 5: searchFlight(); break;
+            case 6: deleteFlight(); break;
+            case 7: cancelPassenger(); break;
+            case 8: sortFlightsByTime(); break;
+            case 9: showStatistics(); break;
+            case 10:
+                saveToFile();
+                printf("\nExiting...\n");
+                return 0;
+            default:
+                printf("\nInvalid choice. Please enter 1-10.\n");
+                clearBuffer();
+        }
+    }
+}
