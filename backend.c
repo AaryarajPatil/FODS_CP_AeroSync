@@ -373,3 +373,21 @@ void cancelPassenger() {
 
     printf("\nPassenger cancelled successfully\n");
 }
+
+void sortFlightsByTime() {
+    if (flightCount == 0) {
+        printf("\nNo flights available to sort.\n");
+        return;
+    }
+
+    for (int i = 0; i < flightCount - 1; i++) {
+        for (int j = i + 1; j < flightCount; j++) {
+            if (strcmp(flights[i].departureTime, flights[j].departureTime) > 0) {
+                struct Flight temp = flights[i];
+                flights[i] = flights[j];
+                flights[j] = temp;
+            }
+        }
+    }
+    printf("\nFlights sorted by time\n");
+}
