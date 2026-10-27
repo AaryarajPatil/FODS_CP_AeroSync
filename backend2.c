@@ -102,3 +102,47 @@ void viewFlights() {
                flights[i].fare);
     }
 }
+
+void bookFlight() {
+    if (flightCount == 0) {
+        printf("\nNo flights available.\n");
+        return;
+    }
+
+    char flightNum[10];
+    printf("\nEnter Flight Number to Book: ");
+    scanf("%9s", flightNum);
+
+    int found = -1;
+    for (int i = 0; i < flightCount; i++) {
+        if (strcmp(flights[i].flightNumber, flightNum) == 0)
+            found = i;
+    }
+
+    if (found == -1) {
+        printf("\nFlight not found!\n");
+        return;
+    }
+
+    struct Flight *f = &flights[found];
+    if (f->bookedSeats >= f->totalSeats) {
+        printf("\nSorry, this flight is fully booked!\n");
+        return;
+    }
+
+    struct Passenger p;
+    clearBuffer();
+    printf("Enter Your Name: ");
+    fgets(p.name, sizeof(p.name), stdin);
+    p.name[strcspn(p.name, "\n")] = 0;
+    printf("Enter Age: ");
+    scanf("%d", &p.age);
+    printf("Enter Seat Number: ");
+    scanf("%9s", p.seat);
+
+    f->passengers[f->bookedSeats++] = p;
+    saveToFile();
+
+    printf("\nFlight booked successfully!\n");
+    printf("Amount to Pay: Rs.%.2f\n", f->fare);
+}
