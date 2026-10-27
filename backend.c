@@ -128,3 +128,73 @@ void viewFlights() {
                flights[i].totalSeats);
     }
 }
+
+void markAttendance() {
+    if (flightCount == 0) {
+        printf("\nNo flights available. Please add a flight first.\n");
+        return;
+    }
+
+    char flightNum[10];
+    printf("\nEnter Flight Number: ");
+    if (scanf("%9s", flightNum) != 1) {
+        printf("Error reading flight number.\n");
+        clearBuffer();
+        return;
+    }
+
+    int found = -1;
+    for (int i = 0; i < flightCount; i++) {
+        if (strcmp(flights[i].flightNumber, flightNum) == 0) {
+            found = i;
+            break;
+        }
+    }
+
+    if (found == -1) {
+        printf("\nFlight not found\n");
+        return;
+    }
+
+    struct Flight *f = &flights[found];
+    if (f->bookedSeats >= f->totalSeats) {
+        printf("\nNo available seats\n");
+        return;
+    }
+
+    struct Passenger p;
+    clearBuffer();
+
+    printf("\nEnter Passenger Name: ");
+    if (fgets(p.name, sizeof(p.name), stdin) == NULL) {
+        printf("Error reading passenger name.\n");
+        return;
+    }
+    p.name[strcspn(p.name, "\n")] = 0;
+
+    printf("Enter Age: ");
+    if (scanf("%d", &p.age) != 1) {
+        printf("Error reading age.\n");
+        clearBuffer();
+        return;
+    }
+
+    // Validate age
+    if (p.age <= 0 || p.age > 120) {
+        printf("Invalid age.\n");
+        clearBuffer();
+        return;
+    }
+
+    printf("Enter Seat Number: ");
+    if (scanf("%9s", p.seat) != 1) {
+        printf("Error reading seat number.\n");
+        clearBuffer();
+        return;
+    }
+
+    f->passengers[f->bookedSeats++] = p;
+    saveToFile();
+
+    printf("\nAttendance Marked Successfully\n");
+}
