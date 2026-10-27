@@ -110,3 +110,21 @@ void addFlight() {
 
     printf("\nFlight Added Successfully\n");
 }
+
+void viewFlights() {
+    if (flightCount == 0) {
+        printf("\nNo flights available\n");
+        return;
+    }
+
+    printf("\nList of Flights:\n");
+    for (int i = 0; i < flightCount; i++) {
+        printf("%d. Flight %s -> %s | Time: %s | Seats: %d/%d\n",
+               i + 1,
+               flights[i].flightNumber,
+               flights[i].destination,
+               flights[i].departureTime,
+               flights[i].bookedSeats,
+               flights[i].totalSeats);
+    }
+}
