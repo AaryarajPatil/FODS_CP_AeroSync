@@ -27,7 +27,7 @@ Key highlights:
 | :--- | :--- | :--- | :--- |
 | **Day 1** | **Core Architecture & C Engine** | Project scaffold, core data structures, binary persistence layer, flight scheduling CRUD, passenger attendance marking, sorting, and analytics. | ✅ **Completed** |
 | **Day 2** | **Role-Based Portals & Commercial Engine** | Admin vs User authentication gating, commercial seat reservation, dynamic fare calculation, and simulated digital payments. | ✅ **Completed** |
-| **Day 3** | **Interactive Web Dashboard & Integrations** | Modern glassmorphism UI, simulated boarding pass QR camera scanner, visual occupancy analytics, and full integration. | 🔄 **Next Up** |
+| **Day 3** | **Interactive Web Dashboard & Integrations** | Modern glassmorphism UI, simulated boarding pass QR camera scanner, visual occupancy analytics, and full integration. | ✅ **Completed** |
 
 ---
 
@@ -97,12 +97,18 @@ gcc -O2 backend2.c -o backend2.exe
 ./backend2
 ```
 
+### Launch Web Dashboard
+Open `frontedn2.html` or `frontend.html` directly in any browser, or run a local server:
+```bash
+python -m http.server 8000
+```
+
 ---
 
 ## 🛠️ Tech Stack
 - **Core Engine:** C (C99/C11 standard)
 - **Data Persistence:** Binary I/O streams
-- **Frontend Dashboard:** HTML5, CSS3, JavaScript *(Releasing Day 3)*
+- **Frontend Dashboard:** HTML5, CSS3 (Glassmorphism), Vanilla JavaScript, WebRTC & Canvas API
 
 ---
 
