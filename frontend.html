@@ -413,5 +413,455 @@
             </div>
         </div>
     </div>
+
+    <script>
+        // Sample initial data
+        let flights = [
+            {
+                flightNumber: "AA101",
+                destination: "New York",
+                departureTime: "08:00",
+                totalSeats: 150,
+                bookedSeats: 45,
+                passengers: [
+                    { name: "John Smith", age: 35, seat: "12A" },
+                    { name: "Emma Johnson", age: 28, seat: "15B" }
+                ]
+            },
+            {
+                flightNumber: "UA202",
+                destination: "Los Angeles",
+                departureTime: "10:30",
+                totalSeats: 200,
+                bookedSeats: 120,
+                passengers: [
+                    { name: "Michael Brown", age: 42, seat: "8C" },
+                    { name: "Sarah Davis", age: 31, seat: "22D" }
+                ]
+            },
+            {
+                flightNumber: "DL303",
+                destination: "Miami",
+                departureTime: "14:15",
+                totalSeats: 180,
+                bookedSeats: 90,
+                passengers: [
+                    { name: "Robert Wilson", age: 55, seat: "5A" }
+                ]
+            }
+        ];
+
+        // DOM Elements
+        const menuButtons = document.querySelectorAll('.menu-btn');
+        const sections = document.querySelectorAll('.section');
+
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set up menu navigation
+            menuButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const targetSection = this.getAttribute('data-section');
+                    
+                    // Update active menu button
+                    menuButtons.forEach(btn => btn.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // Show target section
+                    sections.forEach(section => section.classList.remove('active'));
+                    document.getElementById(targetSection).classList.add('active');
+                    
+                    // Refresh data if needed
+                    if (targetSection === 'dashboard') {
+                        updateDashboard();
+                    } else if (targetSection === 'view-flights') {
+                        displayFlights();
+                    } else if (targetSection === 'statistics') {
+                        displayStatistics();
+                    }
+                });
+            });
+
+            // Initialize flight dropdowns
+            updateFlightDropdowns();
+            
+            // Set up event listeners
+            document.getElementById('add-flight-btn').addEventListener('click', addFlight);
+            document.getElementById('mark-attendance-btn').addEventListener('click', markAttendance);
+            document.getElementById('search-btn').addEventListener('click', searchFlights);
+            document.getElementById('search-flight-btn').addEventListener('click', searchFlightsInList);
+            document.getElementById('passengers-flight').addEventListener('change', displayPassengers);
+            
+            // Initial data display
+            updateDashboard();
+            displayFlights();
+        });
+
+        // Update dashboard with current data
+        function updateDashboard() {
+            const totalFlights = flights.length;
+            const totalPassengers = flights.reduce((sum, flight) => sum + flight.bookedSeats, 0);
+            const avgOccupancy = flights.length > 0 
+                ? Math.round(flights.reduce((sum, flight) => sum + (flight.bookedSeats / flight.totalSeats), 0) / flights.length * 100)
+                : 0;
+            
+            document.getElementById('total-flights').textContent = totalFlights;
+            document.getElementById('total-passengers').textContent = totalPassengers;
+            document.getElementById('avg-occupancy').textContent = `${avgOccupancy}%`;
+            
+            // Display recent flights (last 3)
+            const recentFlightsContainer = document.getElementById('recent-flights');
+            recentFlightsContainer.innerHTML = '';
+            
+            if (flights.length === 0) {
+                recentFlightsContainer.innerHTML = `
+                    <div class="empty-state">
+                        <i>✈️</i>
+                        <p>No flights available. Add your first flight to get started.</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            const recentFlights = flights.slice(-3).reverse();
+            recentFlights.forEach(flight => {
+                const occupancyPercent = Math.round((flight.bookedSeats / flight.totalSeats) * 100);
+                const flightCard = document.createElement('div');
+                flightCard.className = 'flight-card';
+                flightCard.innerHTML = `
+                    <div class="flight-header">
+                        <span class="flight-number">${flight.flightNumber}</span>
+                        <span class="flight-destination">${flight.destination}</span>
+                    </div>
+                    <div class="flight-details">
+                        <span>Departure: ${flight.departureTime}</span>
+                        <span>Seats: ${flight.bookedSeats}/${flight.totalSeats}</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress" style="width: ${occupancyPercent}%"></div>
+                    </div>
+                `;
+                recentFlightsContainer.appendChild(flightCard);
+            });
+        }
+
+        // Display all flights
+        function displayFlights() {
+            const flightsList = document.getElementById('flights-list');
+            flightsList.innerHTML = '';
+            
+            if (flights.length === 0) {
+                flightsList.innerHTML = `
+                    <div class="empty-state">
+                        <i>✈️</i>
+                        <p>No flights available. Add your first flight to get started.</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            flights.forEach(flight => {
+                const occupancyPercent = Math.round((flight.bookedSeats / flight.totalSeats) * 100);
+                const flightCard = document.createElement('div');
+                flightCard.className = 'flight-card';
+                flightCard.innerHTML = `
+                    <div class="flight-header">
+                        <span class="flight-number">${flight.flightNumber}</span>
+                        <span class="flight-destination">${flight.destination}</span>
+                    </div>
+                    <div class="flight-details">
+                        <span>Departure: ${flight.departureTime}</span>
+                        <span>Seats: ${flight.bookedSeats}/${flight.totalSeats}</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress" style="width: ${occupancyPercent}%"></div>
+                    </div>
+                    <div class="action-buttons">
+                        <button class="btn-danger" onclick="deleteFlight('${flight.flightNumber}')">Delete</button>
+                    </div>
+                `;
+                flightsList.appendChild(flightCard);
+            });
+        }
+
+        // Add a new flight
+        function addFlight() {
+            const flightNumber = document.getElementById('flight-number').value.trim();
+            const destination = document.getElementById('destination').value.trim();
+            const departureTime = document.getElementById('departure-time').value.trim();
+            const totalSeats = parseInt(document.getElementById('total-seats').value);
+            
+            if (!flightNumber || !destination || !departureTime || !totalSeats) {
+                showMessage('add-flight-message', 'Please fill in all fields.', 'danger');
+                return;
+            }
+            
+            // Check if flight number already exists
+            if (flights.some(flight => flight.flightNumber === flightNumber)) {
+                showMessage('add-flight-message', 'Flight number already exists.', 'danger');
+                return;
+            }
+            
+            const newFlight = {
+                flightNumber,
+                destination,
+                departureTime,
+                totalSeats,
+                bookedSeats: 0,
+                passengers: []
+            };
+            
+            flights.push(newFlight);
+            updateFlightDropdowns();
+            showMessage('add-flight-message', 'Flight added successfully!', 'success');
+            
+            // Clear form
+            document.getElementById('flight-number').value = '';
+            document.getElementById('destination').value = '';
+            document.getElementById('departure-time').value = '';
+            document.getElementById('total-seats').value = '';
+        }
+
+        // Mark passenger attendance
+        function markAttendance() {
+            const flightNumber = document.getElementById('attendance-flight').value;
+            const passengerName = document.getElementById('passenger-name').value.trim();
+            const passengerAge = parseInt(document.getElementById('passenger-age').value);
+            const seatNumber = document.getElementById('seat-number').value.trim();
+            
+            if (!flightNumber || !passengerName || !passengerAge || !seatNumber) {
+                showMessage('attendance-message', 'Please fill in all fields.', 'danger');
+                return;
+            }
+            
+            const flight = flights.find(f => f.flightNumber === flightNumber);
+            if (!flight) {
+                showMessage('attendance-message', 'Flight not found.', 'danger');
+                return;
+            }
+            
+            if (flight.bookedSeats >= flight.totalSeats) {
+                showMessage('attendance-message', 'No available seats on this flight.', 'danger');
+                return;
+            }
+            
+            // Check if seat is already taken
+            if (flight.passengers.some(p => p.seat === seatNumber)) {
+                showMessage('attendance-message', 'Seat already taken.', 'danger');
+                return;
+            }
+            
+            const newPassenger = {
+                name: passengerName,
+                age: passengerAge,
+                seat: seatNumber
+            };
+            
+            flight.passengers.push(newPassenger);
+            flight.bookedSeats++;
+            
+            showMessage('attendance-message', 'Passenger added successfully!', 'success');
+            
+            // Clear form
+            document.getElementById('passenger-name').value = '';
+            document.getElementById('passenger-age').value = '';
+            document.getElementById('seat-number').value = '';
+        }
+
+        // Display passengers for selected flight
+        function displayPassengers() {
+            const flightNumber = document.getElementById('passengers-flight').value;
+            const passengersList = document.getElementById('passengers-list');
+            
+            if (!flightNumber) {
+                passengersList.innerHTML = '<p>Please select a flight.</p>';
+                return;
+            }
+            
+            const flight = flights.find(f => f.flightNumber === flightNumber);
+            if (!flight) {
+                passengersList.innerHTML = '<p>Flight not found.</p>';
+                return;
+            }
+            
+            if (flight.passengers.length === 0) {
+                passengersList.innerHTML = `
+                    <div class="empty-state">
+                        <i>👥</i>
+                        <p>No passengers booked on this flight.</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            passengersList.innerHTML = '<h3>Passenger List</h3>';
+            flight.passengers.forEach(passenger => {
+                const passengerItem = document.createElement('div');
+                passengerItem.className = 'passenger-item';
+                passengerItem.innerHTML = `
+                    <div>
+                        <strong>${passenger.name}</strong><br>
+                        Age: ${passenger.age} | Seat: ${passenger.seat}
+                    </div>
+                    <button class="btn-danger" onclick="cancelPassenger('${flightNumber}', '${passenger.name}')">Cancel</button>
+                `;
+                passengersList.appendChild(passengerItem);
+            });
+        }
+
+        // Search flights
+        function searchFlights() {
+            const query = document.getElementById('search-query').value.trim().toLowerCase();
+            const resultsContainer = document.getElementById('search-results');
+            
+            if (!query) {
+                resultsContainer.innerHTML = '<p>Please enter a search term.</p>';
+                return;
+            }
+            
+            const matchingFlights = flights.filter(flight => 
+                flight.flightNumber.toLowerCase().includes(query) || 
+                flight.destination.toLowerCase().includes(query)
+            );
+            
+            if (matchingFlights.length === 0) {
+                resultsContainer.innerHTML = `
+                    <div class="empty-state">
+                        <i>🔍</i>
+                        <p>No flights found matching your search.</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            resultsContainer.innerHTML = '<h3>Search Results</h3>';
+            matchingFlights.forEach(flight => {
+                const occupancyPercent = Math.round((flight.bookedSeats / flight.totalSeats) * 100);
+                const flightCard = document.createElement('div');
+                flightCard.className = 'flight-card';
+                flightCard.innerHTML = `
+                    <div class="flight-header">
+                        <span class="flight-number">${flight.flightNumber}</span>
+                        <span class="flight-destination">${flight.destination}</span>
+                    </div>
+                    <div class="flight-details">
+                        <span>Departure: ${flight.departureTime}</span>
+                        <span>Seats: ${flight.bookedSeats}/${flight.totalSeats}</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress" style="width: ${occupancyPercent}%"></div>
+                    </div>
+                `;
+                resultsContainer.appendChild(flightCard);
+            });
+        }
+
+        // Search flights in the view flights section
+        function searchFlightsInList() {
+            const query = document.getElementById('flight-search').value.trim().toLowerCase();
+            const flightCards = document.querySelectorAll('#flights-list .flight-card');
+            
+            flightCards.forEach(card => {
+                const flightNumber = card.querySelector('.flight-number').textContent.toLowerCase();
+                const destination = card.querySelector('.flight-destination').textContent.toLowerCase();
+                
+                if (flightNumber.includes(query) || destination.includes(query)) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+
+        // Display statistics
+        function displayStatistics() {
+            const statsContainer = document.getElementById('statistics-content');
+            statsContainer.innerHTML = '';
+            
+            if (flights.length === 0) {
+                statsContainer.innerHTML = `
+                    <div class="empty-state">
+                        <i>📊</i>
+                        <p>No flight data available for statistics.</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            flights.forEach(flight => {
+                const occupancyPercent = Math.round((flight.bookedSeats / flight.totalSeats) * 100);
+                const statsCard = document.createElement('div');
+                statsCard.className = 'stats-card';
+                statsCard.innerHTML = `
+                    <h3>${flight.flightNumber} → ${flight.destination}</h3>
+                    <p>Seats Filled: ${flight.bookedSeats}/${flight.totalSeats} (${occupancyPercent}%)</p>
+                    <div class="progress-bar">
+                        <div class="progress" style="width: ${occupancyPercent}%"></div>
+                    </div>
+                `;
+                statsContainer.appendChild(statsCard);
+            });
+        }
+
+        // Delete a flight
+        function deleteFlight(flightNumber) {
+            if (confirm(`Are you sure you want to delete flight ${flightNumber}?`)) {
+                flights = flights.filter(flight => flight.flightNumber !== flightNumber);
+                updateFlightDropdowns();
+                displayFlights();
+                updateDashboard();
+            }
+        }
+
+        // Cancel a passenger booking
+        function cancelPassenger(flightNumber, passengerName) {
+            if (confirm(`Cancel booking for ${passengerName}?`)) {
+                const flight = flights.find(f => f.flightNumber === flightNumber);
+                if (flight) {
+                    flight.passengers = flight.passengers.filter(p => p.name !== passengerName);
+                    flight.bookedSeats--;
+                    displayPassengers();
+                    updateDashboard();
+                }
+            }
+        }
+
+        // Update flight dropdowns in forms
+        function updateFlightDropdowns() {
+            const attendanceDropdown = document.getElementById('attendance-flight');
+            const passengersDropdown = document.getElementById('passengers-flight');
+            
+            // Clear existing options (except the first placeholder)
+            while (attendanceDropdown.children.length > 1) {
+                attendanceDropdown.removeChild(attendanceDropdown.lastChild);
+            }
+            while (passengersDropdown.children.length > 1) {
+                passengersDropdown.removeChild(passengersDropdown.lastChild);
+            }
+            
+            // Add flight options
+            flights.forEach(flight => {
+                const option1 = document.createElement('option');
+                option1.value = flight.flightNumber;
+                option1.textContent = `${flight.flightNumber} → ${flight.destination}`;
+                attendanceDropdown.appendChild(option1);
+                
+                const option2 = document.createElement('option');
+                option2.value = flight.flightNumber;
+                option2.textContent = `${flight.flightNumber} → ${flight.destination}`;
+                passengersDropdown.appendChild(option2);
+            });
+        }
+
+        // Show message with specified type (success/danger)
+        function showMessage(elementId, message, type) {
+            const messageElement = document.getElementById(elementId);
+            messageElement.innerHTML = `<div class="alert alert-${type}">${message}</div>`;
+            
+            // Clear message after 3 seconds
+            setTimeout(() => {
+                messageElement.innerHTML = '';
+            }, 3000);
+        }
+    </script>
 </body>
 </html>
