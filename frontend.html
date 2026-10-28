@@ -292,7 +292,124 @@
                 <button class="menu-btn" data-section="statistics">📈 Statistics</button>
             </div>
             <div class="content">
-                <!-- Content sections -->
+                <!-- Dashboard Section -->
+                <div id="dashboard" class="section active">
+                    <h2>Dashboard Overview</h2>
+                    <div class="stats-grid">
+                        <div class="stats-card">
+                            <h3>Total Flights</h3>
+                            <p id="total-flights">0</p>
+                        </div>
+                        <div class="stats-card">
+                            <h3>Total Passengers</h3>
+                            <p id="total-passengers">0</p>
+                        </div>
+                        <div class="stats-card">
+                            <h3>Average Occupancy</h3>
+                            <p id="avg-occupancy">0%</p>
+                        </div>
+                    </div>
+                    
+                    <h3 style="margin-top: 30px;">Recent Flights</h3>
+                    <div id="recent-flights">
+                        <!-- Recent flights will be populated by JavaScript -->
+                    </div>
+                </div>
+
+                <!-- Add Flight Section -->
+                <div id="add-flight" class="section">
+                    <h2>Add New Flight</h2>
+                    <div class="form-group">
+                        <label for="flight-number">Flight Number</label>
+                        <input type="text" id="flight-number" placeholder="e.g., AA123">
+                    </div>
+                    <div class="form-group">
+                        <label for="destination">Destination</label>
+                        <input type="text" id="destination" placeholder="e.g., New York">
+                    </div>
+                    <div class="form-group">
+                        <label for="departure-time">Departure Time</label>
+                        <input type="text" id="departure-time" placeholder="e.g., 14:30">
+                    </div>
+                    <div class="form-group">
+                        <label for="total-seats">Total Seats</label>
+                        <input type="number" id="total-seats" placeholder="e.g., 150">
+                    </div>
+                    <button id="add-flight-btn">Add Flight</button>
+                    <div id="add-flight-message"></div>
+                </div>
+
+                <!-- View Flights Section -->
+                <div id="view-flights" class="section">
+                    <h2>All Flights</h2>
+                    <div class="search-box">
+                        <input type="text" id="flight-search" placeholder="Search flights...">
+                        <button id="search-flight-btn">Search</button>
+                    </div>
+                    <div id="flights-list">
+                        <!-- Flights will be populated by JavaScript -->
+                    </div>
+                </div>
+
+                <!-- Mark Attendance Section -->
+                <div id="mark-attendance" class="section">
+                    <h2>Mark Passenger Attendance</h2>
+                    <div class="form-group">
+                        <label for="attendance-flight">Select Flight</label>
+                        <select id="attendance-flight">
+                            <option value="">-- Select a Flight --</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="passenger-name">Passenger Name</label>
+                        <input type="text" id="passenger-name" placeholder="Full name">
+                    </div>
+                    <div class="form-group">
+                        <label for="passenger-age">Age</label>
+                        <input type="number" id="passenger-age" placeholder="Age">
+                    </div>
+                    <div class="form-group">
+                        <label for="seat-number">Seat Number</label>
+                        <input type="text" id="seat-number" placeholder="e.g., 12A">
+                    </div>
+                    <button id="mark-attendance-btn">Mark Attendance</button>
+                    <div id="attendance-message"></div>
+                </div>
+
+                <!-- View Passengers Section -->
+                <div id="view-passengers" class="section">
+                    <h2>View Passengers</h2>
+                    <div class="form-group">
+                        <label for="passengers-flight">Select Flight</label>
+                        <select id="passengers-flight">
+                            <option value="">-- Select a Flight --</option>
+                        </select>
+                    </div>
+                    <div id="passengers-list">
+                        <!-- Passengers will be populated by JavaScript -->
+                    </div>
+                </div>
+
+                <!-- Search Flight Section -->
+                <div id="search-flight" class="section">
+                    <h2>Search Flight</h2>
+                    <div class="form-group">
+                        <label for="search-query">Flight Number or Destination</label>
+                        <input type="text" id="search-query" placeholder="Enter flight number or destination">
+                    </div>
+                    <button id="search-btn">Search</button>
+                    <div id="search-results">
+                        <!-- Search results will be populated by JavaScript -->
+                    </div>
+                </div>
+
+                <!-- Statistics Section -->
+                <div id="statistics" class="section">
+                    <h2>Flight Statistics</h2>
+                    <div id="statistics-content">
+                        <!-- Statistics will be populated by JavaScript -->
+                    </div>
+                </div>
             </div>
         </div>
     </div>
