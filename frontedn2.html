@@ -102,6 +102,7 @@
 
       <div style="margin-top:14px;font-size:13px;color:var(--muted)">Shortcuts</div>
       <div style="display:flex;gap:8px;margin-top:8px">
+        <button class="btn ghost" id="importDemo">Demo Data</button>
         <button class="btn ghost" id="clearAll">Clear All</button>
       </div>
     </aside>
@@ -396,6 +397,121 @@
 
     function sortFlightsByTime(){
       flights.sort((a,b)=>a.departureTime.localeCompare(b.departureTime)); save(flights); renderFlights(); showToast('Flights sorted by time'); }
+
+    function showStatisticsUI(){ drawStats(); openModal(`<h2>Statistics</h2><canvas id='statCanvasModal' width='600' height='200'></canvas><div style='display:flex;justify-content:flex-end;margin-top:10px'><button class='btn' onclick='closeModal()'>Close</button></div>`); setTimeout(()=> drawStats('statCanvasModal'),50); }
+
+    function drawStats(id='statCanvas'){
+      const c = document.getElementById(id); if(!c) return; const ctx=c.getContext('2d'); ctx.clearRect(0,0,c.width,c.height);
+      const labels = flights.map(f=>f.flightNumber);
+      const data = flights.map(f=>Math.round((f.bookedSeats/f.totalSeats)*100));
+      // simple bar chart
+      const w=c.width, h=c.height, padding=20; const max = Math.max(...data, 10);
+      const barW = (w - padding*2)/Math.max(1,data.length) - 6;
+      data.forEach((val,i)=>{
+        const x = padding + i*(barW+6);
+        const barH = (val/max)*(h-padding*2);
+        ctx.fillStyle='rgba(110,231,183,0.8)';
+        ctx.fillRect(x, h-padding-barH, barW, barH);
+        ctx.fillStyle='#9aa4b2'; ctx.font='11px sans-serif'; ctx.fillText(labels[i]||'', x, h-padding+12);
+      });
+    }
+
+    // Payment / QR
+    function paymentUI(){
+      openModal(`
+        <h2>Payment / QR Scanner</h2>
+        <div style="display:flex;gap:12px;align-items:center">
+          <div class="qr-wrap">
+            <canvas id="qr" width="260" height="260"></canvas>
+            <div style="display:flex;flex-direction:column;gap:8px">
+              <button class="btn" onclick="generateQR()">Generate QR</button>
+              <button class="btn" onclick="simulateScan()">Simulate Scan</button>
+              <button class="btn" onclick="startCamera()">Open Camera (scan)</button>
+            </div>
+          </div>
+        </div>
+        <div style="margin-top:12px;display:flex;justify-content:flex-end"><button class="btn" onclick="closeModal()">Close</button></div>
+      `);
+      setTimeout(()=>generateQR(), 100);
+    }
+
+    function generateQR(){
+      const canvas = document.getElementById('qr'); const ctx=canvas.getContext('2d'); ctx.clearRect(0,0,canvas.width,canvas.height);
+      // draw pseudo-QR (random blocks) — visual only
+      const size=26; const block = Math.floor(canvas.width/size);
+      for(let r=0;r<size;r++){
+        for(let c=0;c<size;c++){
+          if(Math.random()>0.65) ctx.fillStyle='black'; else ctx.fillStyle='white';
+          ctx.fillRect(c*block, r*block, block-1, block-1);
+        }
+      }
+      showToast('QR generated (demo)');
+    }
+
+    function simulateScan(){
+      closeModal(); showToast('Scan detected — Payment successful');
+    }
+
+    // Camera scan (demo) — asks permission and shows camera; for demo we just open a cam preview with a "Simulate" button
+    let camStream=null;
+    function startCamera(){
+      if(!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){ showToast('Camera not supported in this demo'); return; }
+      openModal(`<h2>Camera Scan</h2><video id='cam' autoplay style='width:100%;border-radius:8px'></video><div style='display:flex;gap:8px;justify-content:flex-end;margin-top:8px'><button class='btn ghost' onclick='stopCamera()'>Stop</button><button class='btn primary' onclick='confirmScanFromCam()'>Simulate Scan</button></div>`);
+      const v=document.getElementById('cam');
+      navigator.mediaDevices.getUserMedia({video:true,audio:false}).then(s=>{ camStream=s; v.srcObject=s; }).catch(()=> showToast('Camera permission denied'));
+    }
+    function stopCamera(){ if(camStream){ camStream.getTracks().forEach(t=>t.stop()); camStream=null; } closeModal(); }
+    function confirmScanFromCam(){ stopCamera(); closeModal(); showToast('Camera scan simulated — Payment success'); }
+
+    // Exit
+    function exitUI(){ openModal(`<h2>Exit</h2><div class='muted'>This will save data and "close" the app (demo: clears UI). You can also just close the tab.</div><div style='display:flex;justify-content:flex-end;margin-top:12px'><button class='btn ghost' onclick='closeModal()'>Back</button><button class='btn primary' onclick='exitConfirm()'>Exit</button></div>`); }
+    function exitConfirm(){ save(flights); closeModal(); showToast('Exiting... (demo)'); setTimeout(()=>{ document.body.innerHTML = '<div style="padding:40px;color:#9aa4b2">Thanks — demo exited. Refresh to restart.</div>'; },800); }
+
+    // wire up sidebar
+    document.querySelectorAll('[data-action]').forEach(el=>el.addEventListener('click', ()=>{
+      const a = el.getAttribute('data-action');
+      switch(a){
+        case 'viewFlights': viewFlightsUI(); break;
+        case 'markAttendance': openModal('<h2>Mark Attendance</h2><div class="muted">Click a flight card to mark attendance quickly.</div><div style="display:flex;justify-content:flex-end;margin-top:10px"><button class="btn" onclick="closeModal()">Close</button></div>'); break;
+        case 'viewPassengers': openModal('<h2>View Passengers</h2><div class="muted">Click a flight card -> Passengers</div><div style="display:flex;justify-content:flex-end;margin-top:10px"><button class="btn" onclick="closeModal()">Close</button></div>'); break;
+        case 'searchFlight': searchFlightUI(); break;
+        case 'deleteFlight': openModal('<h2>Delete Flight</h2><div class="muted">Click the Delete button on a flight card for full flow.</div><div style="display:flex;justify-content:flex-end;margin-top:10px"><button class="btn" onclick="closeModal()">Close</button></div>'); break;
+        case 'cancelPassenger': cancelPassengerUI(); break;
+        case 'sortFlights': sortFlightsByTime(); break;
+        case 'showStats': showStatisticsUI(); break;
+        case 'payment': paymentUI(); break;
+        case 'exit': exitUI(); break;
+      }
+    }));
+
+    // quick global buttons
+    document.getElementById('addFlightBtn').addEventListener('click', ()=>addFlightUI());
+    document.getElementById('importDemo').addEventListener('click', ()=>{
+      flights = [
+        {flightNumber:'AI101', destination:'Mumbai', departureTime:'08:30', totalSeats:120, bookedSeats:5, passengers:[{name:'Asha',age:29,seat:'12A'},{name:'Ravi',age:33,seat:'12B'},{name:'Maya',age:25,seat:'14C'},{name:'Zoe',age:22,seat:'14D'},{name:'Sam',age:40,seat:'15A'}]},
+        {flightNumber:'AI202', destination:'Delhi', departureTime:'12:20', totalSeats:100, bookedSeats:2, passengers:[{name:'Nikhil',age:30,seat:'10A'},{name:'Priya',age:27,seat:'10B'}]},
+        {flightNumber:'QR303', destination:'Bengaluru', departureTime:'15:45', totalSeats:80, bookedSeats:0, passengers:[]}
+      ]; save(flights); renderFlights(); showToast('Demo flights loaded');
+    });
+
+    document.getElementById('clearAll').addEventListener('click', ()=>{ if(confirm('Clear all flights (this will remove local data)?')){ flights=[]; save(flights); renderFlights(); showToast('Cleared'); }});
+
+    // delete flight and viewPassengers accessible globally
+    window.viewPassengers = viewPassengers;
+    window.markAttendanceUI = markAttendanceUI;
+    window.deleteFlightUI = deleteFlightUI;
+
+    // cancel passenger confirm global
+    window.cancelPassengerConfirm = cancelPassengerConfirm;
+
+    // initial render
+    renderFlights();
+
+    // refresh stats button
+    document.getElementById('refreshStats').addEventListener('click', ()=>{ drawStats(); showToast('Stats refreshed'); });
+
+    // keyboard hint
+    document.addEventListener('keydown', (e)=>{ if(e.key==='/' && e.ctrlKey){ e.preventDefault(); searchFlightUI(); } });
   </script>
 </body>
 </html>
